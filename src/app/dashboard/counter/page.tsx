@@ -4,5 +4,5 @@ export default function CounterPage() {
     <div>
       <h1>Hello Page Counter</h1>
     </div>
-  );
+  )
 }
