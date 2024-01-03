@@ -10,18 +10,18 @@ interface Props {
 // De esta forma se crea un dynamic metadata o metadata dinámica, y tiene que tener exactamente el nombre "generateMetadata", ya que solo con ese nombre Next reconoce que es una funcion para aplicar a la metadata de la pagina, esta funcion recibe como argumento los parametros de la url y para que se apliquen en la metadata la funcion tiene que retornar un objeto con las propiedades de la metadata
 // Recordar que si el nombre de la funcion esta mal escrito entonces no se aplicaran los cambios en la metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  let { id, name } = await getPokemon(params.id)
+  const { id, name } = await getPokemon(params.id)
 
   // Capitalizo el nombre
-  name = name
+  const capitalizedName = name
     .toLowerCase()
     .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 
   return {
-    title: `#${id} - ${name}`,
-    description: `Pokemon page ${name}}`,
+    title: `#${id} - ${capitalizedName}`,
+    description: `Pokemon page ${capitalizedName}}`,
   }
 }
 
