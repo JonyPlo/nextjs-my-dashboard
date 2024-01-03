@@ -11,7 +11,7 @@ export const PokemonCard = ({ pokemon }: Props) => {
   const { id, name } = pokemon
 
   return (
-    <div className='mx-auto right-0 mt-2 w-60'>
+    <div className='mt-2 w-full'>
       <div className='bg-white rounded overflow-hidden shadow-lg'>
         <div className='text-center p-6 bg-gray-800 border-b flex flex-col items-center'>
           <Image
