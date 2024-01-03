@@ -1,5 +1,5 @@
-import type { PokemonsResponse, SimplePokemon } from '@/app/pokemons'
-import Image from 'next/image'
+import { PokemonGrid, PokemonsResponse, SimplePokemon } from '@/pokemons'
+import { notFound } from 'next/navigation'
 
 // El equipo de Next modifico el metodo fetch de javascript con algunas funcionalidades extras como por ejemplo almacenar la respuesta en cache, poner un contador para poder realizar una peticion nuevamente, etc. Por defecto haciendo una consulta normal ya almacena los datos en cache
 const getPokemons = async (
@@ -15,25 +15,23 @@ const getPokemons = async (
     name: pokemon.name,
   }))
 
+  // throw new Error('This is an error that should not happen ')
+  // throw notFound()
+
   return pokemons
 }
+
 
 export default async function PokemonsPage() {
   const pokemons = await getPokemons(151)
 
   return (
     <div className='flex flex-col'>
-      <div className='flex flex-wrap gap-1- items-center justify-center'>
-        {pokemons.map((pokemon) => (
-          <Image
-            key={pokemon.id}
-            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemon.id}.svg`}
-            width={100}
-            height={100}
-            alt={pokemon.name}
-          />
-        ))}
-      </div>
+      <span className='text-5xl my-2'>
+        Pokemons List <small>Static</small>
+      </span>
+
+      <PokemonGrid pokemons={pokemons} />
     </div>
   )
 }

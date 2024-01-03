@@ -1,5 +1,10 @@
 import Image from 'next/image'
-import { IoBrowsersOutline, IoCalculator, IoFootball, IoLogoReact } from 'react-icons/io5'
+import {
+  IoBrowsersOutline,
+  IoCalculator,
+  IoFootball,
+  IoLogoReact,
+} from 'react-icons/io5'
 import { SideBarMenuItem } from '..'
 
 const menuItems = [
@@ -28,7 +33,7 @@ export const SideBar = () => {
     <div
       id='menu'
       style={{ width: '400px' }}
-      className='bg-gray-900 min-h-screen z-10 text-slate-300 w-64 left-0 overflow-y-scroll'
+      className='bg-gray-900 min-h-screen z-10 text-slate-300 w-64 left-0'
     >
       <div className='flex justify-center'>
         <IoLogoReact className='m-2 size-10 my-5' />
