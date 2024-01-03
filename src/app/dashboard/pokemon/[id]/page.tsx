@@ -1,9 +1,28 @@
 //! En el nombre de la carpeta se agregan los corchetes como  [id] para indicar que esta parte de la ruta es un parametro, por lo tanto es dinamico y va a ir cambiando
 
 import { Pokemon } from '@/pokemons'
+import { Metadata } from 'next'
 
 interface Props {
   params: { id: string }
+}
+
+// De esta forma se crea un dynamic metadata o metadata dinámica, y tiene que tener exactamente el nombre "generateMetadata", ya que solo con ese nombre Next reconoce que es una funcion para aplicar a la metadata de la pagina, esta funcion recibe como argumento los parametros de la url y para que se apliquen en la metadata la funcion tiene que retornar un objeto con las propiedades de la metadata
+// Recordar que si el nombre de la funcion esta mal escrito entonces no se aplicaran los cambios en la metadata
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id, name } = await getPokemon(params.id)
+
+  // Capitalizo el nombre
+  const capitalizedName = name
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+
+  return {
+    title: `#${id} - ${capitalizedName}`,
+    description: `Pokemon page ${capitalizedName}}`,
+  }
 }
 
 const getPokemon = async (id: string): Promise<Pokemon> => {
@@ -11,7 +30,7 @@ const getPokemon = async (id: string): Promise<Pokemon> => {
     cache: 'force-cache',
   }).then((res) => res.json())
 
-  console.log('Se cargo: ', pokemon)
+  console.log('Se cargo: ', pokemon.name)
 
   return pokemon
 }
@@ -24,7 +43,7 @@ export default async function PokemonPage({ params }: Props) {
   return (
     <div>
       <h1>Pokemon {params.id}</h1>
-      <div>{JSON.stringify(pokemon)}</div>
+      <div>{pokemon.name}</div>
     </div>
   )
 }
