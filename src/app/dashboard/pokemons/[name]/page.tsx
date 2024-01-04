@@ -1,42 +1,24 @@
-//! En el nombre de la carpeta se agregan los corchetes como  [id] para indicar que esta parte de la ruta es un parametro, por lo tanto es dinamico y va a ir cambiando
-
-import { Pokemon } from '@/pokemons'
-import { Metadata } from 'next'
+import type { Pokemon, PokemonsResponse } from '@/pokemons'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 interface Props {
-  params: { id: string }
+  params: { name: string }
 }
 
-//! El snippet par esta funcion es "gsp"
-//! Esta funcion solo se ejecuta en el momento del build time
-// Esta funcion sirve para generar las paginas estáticas dinámicas basadas en los parametros, en otras palabras esta funcion genera paginas y las deja listas para servirlas al usuario antes de que las solicite
-// Recordar que el nombre de la funcion debe ser exactamente "generateStaticParams" para que Next la reconozca
-// Esta funcion siempre debe retornar un arreglo de objetos
 export async function generateStaticParams() {
-  const static151Pokemons = Array.from({ length: 151 }).map(
-    (_v, i) => `${i + 1}`
-  )
+  const { results }: PokemonsResponse = await fetch(
+    `https://pokeapi.co/api/v2/pokemon?limit=151`
+  ).then((res) => res.json())
 
-  return static151Pokemons.map((id) => ({
-    id: id,
+  return results.map(({ name }) => ({
+    name: name,
   }))
-
-  // return [
-  //   { id: '1' },
-  //   { id: '2' },
-  //   { id: '3' },
-  //   { id: '4' },
-  //   { id: '5' },
-  //   { id: '6' },
-  // ]
 }
 
-// De esta forma se crea un dynamic metadata o metadata dinámica, y tiene que tener exactamente el nombre "generateMetadata", ya que solo con ese nombre Next reconoce que es una funcion para aplicar a la metadata de la pagina, esta funcion recibe como argumento los parametros de la url y para que se apliquen en la metadata la funcion tiene que retornar un objeto con las propiedades de la metadata
-// Recordar que si el nombre de la funcion esta mal escrito entonces no se aplicaran los cambios en la metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id, name } = await getPokemon(params.id)
+  const { id, name } = await getPokemon(params.name)
 
   // Capitalizo el nombre
   const capitalizedName = name
@@ -47,34 +29,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     return {
-      title: `#${id} - ${capitalizedName}`,
-      description: `Pokemon page ${capitalizedName}`,
+      title: `${capitalizedName} Page - #${id}`,
+      description: `${capitalizedName} Description...`,
     }
   } catch (error) {
     return {
-      title: 'Pokemon title',
-      description: 'Pokemon description',
+      title: 'Pokemon Name',
+      description: 'Pokemon Description',
     }
   }
 }
 
-const getPokemon = async (id: string): Promise<Pokemon> => {
+const getPokemon = async (name: string): Promise<Pokemon> => {
   try {
-    const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
-      cache: 'force-cache',
-    }).then((res) => res.json())
+    const pokemonByName = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${name}`,
+      {
+        next: {
+          // De esta forma hacemos que se revalide o que se vuelva a ejecutar la peticion, despues del tiempo definido
+          revalidate: 60 * 60 * 30 * 6,
+        },
+      }
+    ).then((res) => res.json())
 
-    return pokemon
+    return pokemonByName
   } catch (error) {
-    // Este metodo de Next nos redirige a la pagina not-found.tsx global que configuramos en en root de la aplicacion, en este caso se encuentra en la ruta "src/app/not-found.tsx/" eso sirve para renderizar esa pagina por si algo falla en la peticion
     notFound()
   }
 }
 
-// Por defecto next ya hace que la pagina reciba el parametro id que asi es como nombramos a la carpeta que contiene esta pagina, y ese id tiene el valor o el id que mandamos en la url
-// Este objeto props trae por defecto 2 propiedades, una se llama "params" que ahi es donde se almacena el o los parametros y la otra se llama "searchParams" que ahi se almacenaran los query params, por ejemplo del siguiente link "https://pokeapi.co/api/v2/pokemon/150?q=char&age=33" va a extraer el "q" y el "age" y terminara quedando searchParams = {q: 'char', age= '33'}
-export default async function PokemonPage({ params }: Props) {
-  const pokemon = await getPokemon(params.id)
+export default async function PokemonByNamePage({ params }: Props) {
+  const pokemon = await getPokemon(params.name)
 
   return (
     <div className='flex mt-5 flex-col items-center text-slate-800'>

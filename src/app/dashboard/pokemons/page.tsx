@@ -1,5 +1,10 @@
 import { PokemonGrid, PokemonsResponse, SimplePokemon } from '@/pokemons'
-import { notFound } from 'next/navigation'
+
+
+export const metadata = {
+ title: 'Pokemons Page',
+ description: 'Pokemons Page',
+};
 
 // El equipo de Next modifico el metodo fetch de javascript con algunas funcionalidades extras como por ejemplo almacenar la respuesta en cache, poner un contador para poder realizar una peticion nuevamente, etc. Por defecto haciendo una consulta normal ya almacena los datos en cache
 const getPokemons = async (
