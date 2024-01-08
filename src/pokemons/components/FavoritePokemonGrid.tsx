@@ -3,14 +3,12 @@
 import { useAppSelector } from '@/store'
 import { PokemonCard } from '..'
 import Link from 'next/link'
-import { useState } from 'react'
 import { IoHeartOutline } from 'react-icons/io5'
 
 export const FavoritePokemonGrid = () => {
-  const favoritePokemons = useAppSelector((state) =>
-    Object.values(state.pokemons)
+  const pokemons = useAppSelector((state) =>
+    Object.values(state.pokemons.favorites)
   )
-  const [pokemons, setPokemons] = useState(favoritePokemons)
 
   return (
     <>
@@ -19,7 +17,7 @@ export const FavoritePokemonGrid = () => {
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4'>
           {pokemons.map((pokemon) => (
-            <PokemonCard key={pokemon.id} pokemon={pokemon} />
+            <PokemonCard key={pokemon.id} pokemon={pokemon} favorites={ true} />
           ))}
         </div>
       )}

@@ -20,9 +20,6 @@ const getPokemons = async (
     name: pokemon.name,
   }))
 
-  // throw new Error('This is an error that should not happen ')
-  // throw notFound()
-
   return pokemons
 }
 

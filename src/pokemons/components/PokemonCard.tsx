@@ -6,17 +6,63 @@ import { IoHeart, IoHeartOutline } from 'react-icons/io5'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { onToggleFavorite } from '@/store/pokemons/pokemonsSlice'
 import { SimplePokemon } from '..'
+import Swal from 'sweetalert2'
 
 interface Props {
   pokemon: SimplePokemon
+  favorites?: boolean
 }
 
-export const PokemonCard = ({ pokemon }: Props) => {
+export const PokemonCard = ({ pokemon, favorites }: Props) => {
   const { id, name } = pokemon
-  const isFavorite = useAppSelector((state) => Boolean(state.pokemons[id]))
+  const isFavorite = useAppSelector((state) =>
+    Boolean(state.pokemons.favorites[id])
+  )
   const dispatch = useAppDispatch()
 
   const toggleFavorite = () => {
+    // Condition if pokemon card is in favorites page
+    if (favorites) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer
+          toast.onmouseleave = Swal.resumeTimer
+        },
+      })
+
+      // Capitalize the name
+      const capitalizedName = name
+        .toLowerCase()
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+
+      return Swal.fire({
+        title: `Remove ${capitalizedName} pokemon from favorites?`,
+        text: 'Then you will have to add it again from the pokemon page!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#1e40af',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          dispatch(onToggleFavorite(pokemon))
+          Toast.fire({
+            icon: 'success',
+            title: `${capitalizedName} removed from favorites`,
+          })
+        }
+      })
+    }
+
     dispatch(onToggleFavorite(pokemon))
   }
 
